@@ -2,17 +2,21 @@ package com.pgyt.eveapitool;
 
 import android.os.AsyncTask;
 
-import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by yuich on 2018/03/24.
+ * Created by pgyt on 2018/03/24.
  */
 
 public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
+
+    private Listener listener;
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -25,7 +29,7 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
 
         HttpURLConnection httpUrlConnection;
         URL url;
-        String urlString = "http://xxxxxxxxxxxxx";
+        String urlString = "https://api.eveonline.com/account/APIKeyInfo.xml.aspx?&keyID=0000000&vCode=xxxxxxxxxx";
 
         try {
             url = new URL(urlString);
@@ -37,20 +41,24 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.connect();
 
-
             InputStream in = httpUrlConnection.getInputStream();
-            byte bodyByte[] = new byte[1024];
-            in.read(bodyByte);
-            in.close();
+            StringBuffer sb = new StringBuffer();
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String readString = "";
+
+            while((readString = br.readLine()) != null)
+            {
+                sb.append(readString);
+            }
+            return sb.toString();
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
 
         } catch (Exception e) {
             e.printStackTrace();
-            
-        }
 
+        }
 
         return null;
     }
@@ -60,5 +68,14 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
         super.onPostExecute(result);
 
         // 後処理
+        listener.onSucces(result);
+    }
+
+    void setListener(Listener listener){
+        this.listener = listener;
+    }
+
+    interface Listener{
+        void onSucces(String result);
     }
 }
