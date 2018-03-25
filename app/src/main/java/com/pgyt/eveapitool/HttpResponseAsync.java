@@ -9,6 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static com.pgyt.eveapitool.CommonConstants.BLANK_STRING;
+import static com.pgyt.eveapitool.CommonConstants.CHARSET_UTF8;
+import static com.pgyt.eveapitool.CommonConstants.REQUEST_METHOD_POST;
+
 /**
  * Created by pgyt on 2018/03/24.
  */
@@ -35,16 +39,16 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
             url = new URL(urlString);
 
             httpUrlConnection = (HttpURLConnection) url.openConnection();
-            httpUrlConnection.setRequestMethod("POST");
+            httpUrlConnection.setRequestMethod(REQUEST_METHOD_POST);
             httpUrlConnection.setInstanceFollowRedirects(false);
             httpUrlConnection.setDoInput(true);
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.connect();
 
+            String readString;
             InputStream in = httpUrlConnection.getInputStream();
             StringBuffer sb = new StringBuffer();
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String readString = "";
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, CHARSET_UTF8));
 
             while((readString = br.readLine()) != null)
             {
